@@ -10,13 +10,13 @@ const app = express()
 const port = process.env.PORT || config.port
 
 app.use(bodyParser.urlencoded({ extended: false }))
-
 app.use(bodyParser.json())
 
 app.use(morgan('common'))
-mongoose.connect(config.databaseUrl)
 
-var db = mongoose.connection;
+mongoose.connect(config.databaseUrl, { useMongoClient: true })
+
+let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
 db.once('open', function () { console.log('Connected to a database') });
 
