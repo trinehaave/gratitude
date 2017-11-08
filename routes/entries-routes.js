@@ -102,7 +102,7 @@ router.route('/:entryId')
         res.status(200).json(entry);
       })
   })
-  
+
 //search for entries with specific phrases and list
 
 module.exports = router
