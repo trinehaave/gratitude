@@ -18,20 +18,6 @@ router.route('/')
       })
   })
 
-router.route('/:entryId')
-  .get((req, res) => {
-    entryModel.find({
-        _id: req.params.entryId
-      })
-      .then((entry) => {
-        res.status(200).json(entry)
-      })
-      .catch((error) => {
-        console.log(error)
-        res.status(500).send("something has happened")
-      })
-  })
-
 router.route('/')
   .post((req, res) => {
     let newEntry = new entryModel()
@@ -83,29 +69,29 @@ router.route('/delete/:entryId')
 
 router.route('/:entryId')
   .put((req, res) => {
+    console.log('put')
+
+    let newEntry = new entryModel()
+    newEntry.author = req.body.author
+    newEntry.gratefuls = req.body.gratefuls
+    newEntry.goalTomorrow = req.body.goalTomorrow
+
     entryModel.findOneAndUpdate({
       _id: req.params.entryId
     }, {
       $set: {
-        author: req.body.author,
-        gratefuls: req.body.gratefuls,
-        goalTomorrow: req.body.goalTomorrow
-      }
-    }, {
-      new: true
-    }).exec(
-      function(err, entry) {
-        if (err || !entry) {
-          console.log(err);
-          return res.status(500).json({
-            message: 'Internal Server Error'
-          })
-        }
-        console.log(entry);
-        res.status(200).json(entry);
+        newEntry
+      }, {
+        new: true
+      }).exec()
+      .then(() => {
+        res.status(200).send('Entry has been saved')
+      })
+      .catch(() => {
+        res.status(500).send('Something went wrong :(')
       })
   })
 
-//search for entries with specific phrases and list
+
 
 module.exports = router
