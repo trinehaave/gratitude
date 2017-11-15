@@ -107,5 +107,26 @@ router.route('/:entryId')
   })
 
 //search for entries with specific phrases and list
+//get all entries
+//search field gratefuls(array) and goal for tomorrow for string
+
+router.route('/query/:phrase')
+  .get((req, res) => {
+    let matches = entryCollection.find({
+        gratefuls: req.params.phrase
+      }).toArray()
+      .then((matches) => {
+        if (matches.length == 0) {
+          res.status(404).json("Nothing found")
+          return
+        }
+          res.status(200).json(matches)
+      })
+      .catch((error) => {
+        console.log(error)
+        res.status(500).send("something has happened")
+      })
+  })
+
 
 module.exports = router

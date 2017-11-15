@@ -2,7 +2,7 @@ const express = require('express')
 const userModel = require('../models/user-model')
 const mongoose = require('mongoose')
 
-const userCollection = mongoose.connection.collection('users')
+const userCollection = mongoose.connection.collection('user')
 
 const router = express.Router()
 
@@ -68,9 +68,8 @@ router.route('/deleteAll')
 
 router.route('/:username')
   .delete((req, res) => {
-    console.log('delete')
-    entryModel.findOneAndRemove({
-        _id: req.params.username
+    userModel.findOneAndRemove({
+        username: req.params.username
       })
       .then(() => {
         res.status(200).send('User has been deleted')
@@ -80,5 +79,29 @@ router.route('/:username')
         res.status(500).send('Something went wrong :(')
       })
   })
+
+  router.route('/:username')
+    .put((req, res) => {
+      userModel.findOneAndUpdate({
+        username: req.params.username
+      }, {
+        $set: {
+          username: req.body.username,
+          password: req.body.password,
+        }
+      }, {
+        new: true
+      }).exec(
+        function(err, entry) {
+          if (err || !entry) {
+            console.log(err);
+            return res.status(500).json({
+              message: 'Internal Server Error'
+            })
+          }
+          console.log(entry);
+          res.status(200).json(entry);
+        })
+    })
 
 module.exports = router
