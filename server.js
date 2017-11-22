@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const entriesRoutes = require('./routes/entries-routes')
 const userRoutes = require('./routes/user-routes')
+const authRoutes = require('./routes/auth-routes')
 const config = require('./config')
 
 const app = express()
@@ -24,6 +25,8 @@ app.use('/entries', entriesRoutes)
 //any call that starts with /entries, use entriesRoutes (entriesRoutes is the routes/entries-routes.js)
 
 app.use('/user', userRoutes)
+
+app.use('/auth', authRoutes)
 
 app.listen(port, () => {
   console.log(`Gratitude journal magic is happening on port ${port}`)

@@ -6,6 +6,16 @@ const entryCollection = mongoose.connection.collection('entries')
 
 const router = express.Router()
 
+//Middleware
+router.use(function(req, res, next) {
+  console.log("route middleware");
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 router.route('/')
   .get((req, res) => {
     entryModel.find({})
@@ -120,7 +130,7 @@ router.route('/query/:phrase')
           res.status(404).json("Nothing found")
           return
         }
-          res.status(200).json(matches)
+        res.status(200).json(matches)
       })
       .catch((error) => {
         console.log(error)

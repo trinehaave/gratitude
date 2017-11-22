@@ -12,8 +12,10 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
+    "hash": "^0.2.0",
     "moment": "^2.19.1",
     "mongoose": "^4.12.6",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "password-hash": "^1.2.2"
   }
 }
