@@ -48,14 +48,14 @@ router.route('/login')
           res.status(404).json('Username does not exist')
           return
         }
-        if(!passwordHash.verify(req.body.password, user.password)){
+        if (!passwordHash.verify(req.body.password, user.password)) {
           res.status(400).send('Password does not match')
           return
         }
         let tokenUser = {
           username: user.username
         }
-        let token = jwt.sign(tokenUser, config.secret)
+        let token = jwt.sign(tokenUser, config.secret, {expiresIn: 60 * 60})
         res.status(200).json(token)
       })
       .catch((error) => {
