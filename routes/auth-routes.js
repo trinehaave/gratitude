@@ -2,6 +2,8 @@ const express = require('express')
 const userModel = require('../models/user-model')
 const mongoose = require('mongoose')
 const passwordHash = require('password-hash')
+const jwt = require('jsonwebtoken')
+const config = require('../config')
 
 const userCollection = mongoose.connection.collection('user')
 
@@ -43,19 +45,18 @@ router.route('/login')
       })
       .then((user) => {
         if (!user) {
-          res.status(200).json('Username or password is wrong')
+          res.status(404).json('Username does not exist')
           return
         }
-
-        let password = passwordHash.generate(req.body.password)
-          .then(() => {
-            if (password == res.body.password) {
-              res.status(200).send('success')
-            }
-          })
-          .catch(() => {
-            res.status(500).send('Something went wrong :(')
-          })
+        if(!passwordHash.verify(req.body.password, user.password)){
+          res.status(400).send('Password does not match')
+          return
+        }
+        let tokenUser = {
+          username: user.username
+        }
+        let token = jwt.sign(tokenUser, config.secret)
+        res.status(200).json(token)
       })
       .catch((error) => {
         console.log('inside catch')
@@ -67,16 +68,16 @@ router.route('/login')
 
 
 
-Steps
-for login
-1. - in the route check
-for the user(findOne)
-2. - If user does not exist send a message and
-return
-3. - If user exist check the password 'passwordHash.verify(req.body.password, user.password)'
-4. - If the password its ok generate the token https: //github.com/auth0/node-jsonwebtoken
+// Steps
+// for login
+// 1. - in the route check
+// for the user(findOne)
+// 2. - If user does not exist send a message and
+// return
+// 3. - If user exist check the password 'passwordHash.verify(req.body.password, user.password)'
+// 4. - If the password its ok generate the token https: //github.com/auth0/node-jsonwebtoken
+//
+//   https://www.npmjs.com/package/password-hash
 
-  https: //www.npmjs.com/package/password-hash
 
-
-  module.exports = router
+module.exports = router

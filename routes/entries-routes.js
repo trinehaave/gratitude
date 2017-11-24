@@ -1,13 +1,34 @@
 const express = require('express')
 const entryModel = require('../models/entries-model')
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
+const config = require('../config')
 
 const entryCollection = mongoose.connection.collection('entries')
 
 const router = express.Router()
 
+//middleware for login
+router.use((req, res, next) => {
+  const token = req.headers.authorization || req.body.token
+  if (!token) {
+    res.status(401).json('Not authorized')
+    return
+  }
+  jwt.verify(token, config.secret, (error, decode) => {
+    if (error) {
+      res.status(500).json({
+        message: "Token is not valid"
+      })
+      return
+    }
+    req.user = decode
+    next()
+  })
+})
+
 //Middleware
-router.use(function(req, res, next) {
+router.use((req, res, next) => {
   console.log("route middleware");
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
