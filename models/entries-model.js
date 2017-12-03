@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const moment = require('moment')
 
 let entrySchema = new mongoose.Schema({
-    date: {type: String, default: moment(Date.now()).format("ddd, MMM Do Y")},
+    date: {type: String, default: new Date()},
     gratefuls: [String],
     goalTomorrow: String,
     author: String

@@ -8,8 +8,23 @@ const entryCollection = mongoose.connection.collection('entries')
 
 const router = express.Router()
 
+//Middleware
+router.use((req, res, next) => {
+  console.log("route middleware");
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 //middleware for login
 router.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200)
+    res.end()
+    return
+  }
   const token = req.headers.authorization || req.body.token
   if (!token) {
     res.status(401).json('Not authorized')
@@ -27,19 +42,13 @@ router.use((req, res, next) => {
   })
 })
 
-//Middleware
-router.use((req, res, next) => {
-  console.log("route middleware");
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
-
 router.route('/')
   .get((req, res) => {
-    entryModel.find({})
+    entryModel
+      .find({})
+      .sort({
+        date: 1
+      })
       .then((entries) => {
         res.status(200).json(entries)
       })
@@ -71,8 +80,11 @@ router.route('/')
     newEntry.goalTomorrow = req.body.goalTomorrow
 
     newEntry.save()
-      .then(() => {
-        res.status(200).send('Entry has been saved')
+      .then((entry) => {
+        res.status(200).json({
+          message: 'entry has been saved',
+          data: entry
+        })
       })
       .catch(() => {
         res.status(500).send('Something went wrong :(')
