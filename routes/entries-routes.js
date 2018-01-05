@@ -42,10 +42,10 @@ router.use((req, res, next) => {
   })
 })
 
-router.route('/')
+router.route('/searchByUser/:userId')
   .get((req, res) => {
     entryModel
-      .find({})
+      .find({authorId: req.params.userId})
       .sort({
         date: 1
       })
@@ -76,8 +76,10 @@ router.route('/')
   .post((req, res) => {
     let newEntry = new entryModel()
     newEntry.author = req.body.author
+    newEntry.authorId = req.body.authorId
     newEntry.gratefuls = req.body.gratefuls
     newEntry.goalTomorrow = req.body.goalTomorrow
+
 
     newEntry.save()
       .then((entry) => {

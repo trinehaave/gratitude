@@ -5,7 +5,8 @@ let entrySchema = new mongoose.Schema({
     date: {type: String, default: new Date()},
     gratefuls: [String],
     goalTomorrow: String,
-    author: String
+    author: String,
+    authorId: mongoose.Schema.ObjectId
 })
 
 module.exports = mongoose.model('entries', entrySchema)

@@ -65,7 +65,10 @@ router.route('/login')
           username: user.username
         }
         let token = jwt.sign(tokenUser, config.secret, {expiresIn: 60 * 60})
-        res.status(200).json(token)
+        res.status(200).json({
+          token: token,
+          userId: user._id
+        })
       })
       .catch((error) => {
         console.log('inside catch')
